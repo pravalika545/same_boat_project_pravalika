@@ -10,14 +10,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> imageUrl = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm3wlmhT3_LJ5vXVcp_R8EIgETshpjx8IU8A&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA--rCsVnsdik9PY2JyFHHhb-L7nPD3HNEDA&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvmx3TfeqxJ0ZnLCX9a4EBAoEa90mgnTcDRA&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKs93Q8MiOigMFhaOBhY9bsLIdm9venj4xsg&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4HbJXc_SuTrT_xVnC__1zAXx_UQlf3HRvKQ&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxS_hPx_iIoAvNf9a5BOTpOxIlDxAhgm36ag&usqp=CAU",
-  ];
   final imageController = Get.put(ImageController());
   @override
   Widget build(BuildContext context) {
@@ -30,9 +22,9 @@ class _HomePageState extends State<HomePage> {
           size: 35,
           color: Color(0xffFFFFFF),
         ),
-        title: const Text(
-          "Three Images Selected",
-          style: TextStyle(
+        title: Text(
+          "${imageController.pickedImageList.length}",
+          style: const TextStyle(
             fontSize: 21,
             color: Color(0xffFFFFFF),
           ),
@@ -44,47 +36,56 @@ class _HomePageState extends State<HomePage> {
           Obx(
             () => Container(
               margin: const EdgeInsets.all(15),
-              height: 512,
-              width: 378,
+              height: 400,
+              width: 400,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: imageController.selectedImageUrl.value.isEmpty
+              child: imageController.pickedImageList.isEmpty
                   ? const Placeholder()
-                  : Image.network(
-                      imageController.selectedImageUrl.value,
+                  : Image.file(
+                      imageController.pickedImageList[
+                          imageController.selctedImageIndex.value],
                       fit: BoxFit.cover,
                     ),
             ),
           ),
-          SizedBox(
-            height: 71,
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: imageUrl.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.all(8),
-                    height: 71,
-                    width: 71,
-                    child: ListTile(
-                      title: Container(
-                        height: 71,
-                        width: 71,
-                        decoration: BoxDecoration(
+          Obx(
+            () => SizedBox(
+              height: 71,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: imageController.pickedImageList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          imageController.setImagePreview(index);
+                        },
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: Colors.red),
-                        child: Image.network(
-                          imageUrl[index],
-                          fit: BoxFit.fill,
+                            color: Colors.grey,
+                            image: DecorationImage(
+                              image: FileImage(
+                                  imageController.pickedImageList[index]),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          child: IconButton(
+                              onPressed: () {
+                                imageController.removeList(index);
+                              },
+                              icon: const Icon(Icons.delete,
+                                  size: 40, color: Colors.white)),
                         ),
                       ),
-                      onTap: () {
-                        imageController.setImageUrl(imageUrl[index]);
-                      },
-                    ),
-                  );
-                }),
+                    );
+                  }),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(12),
@@ -94,24 +95,29 @@ class _HomePageState extends State<HomePage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(21)),
               child: TextFormField(
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(20),
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(20),
                   hintText: 'Add a caption...',
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                     fontSize: 15,
                     color: Color(0xffF0EFF5),
                   ),
-                  prefixIcon: Icon(
-                    Icons.add_circle_outlined,
-                    size: 35,
+                  prefixIcon: IconButton(
+                    onPressed: () {
+                      imageController.pickImageFromGallery();
+                    },
+                    icon: const Icon(
+                      Icons.add_circle_outlined,
+                      size: 35,
+                    ),
                     color: Color(0xffFFFFFF),
                   ),
-                  border: OutlineInputBorder(
+                  border: const OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.all(
                         Radius.circular(21),
                       )),
-                  suffixIcon: Icon(
+                  suffixIcon: const Icon(
                     Icons.send,
                     color: Color(0xffFFFFFF),
                   ),
