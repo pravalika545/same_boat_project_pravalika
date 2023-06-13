@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:same_boat_project/views/todo_app.dart';
+import 'package:get/get.dart';
+
+import 'package:same_boat_project/views/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,9 +12,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Todo App',
-        home: TodoAppList());
+    return const GetMaterialApp(
+        debugShowCheckedModeBanner: false, title: 'Todo App', home: HomePage());
   }
 }
